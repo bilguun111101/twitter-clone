@@ -1,18 +1,34 @@
-import useLoginModal from "@/hooks/useLoginModal";
-import { useCallback, useState } from "react";
-import Input from "../Input";
 import Modal from "../Modal";
+import Input from "../Input";
+import { useCallback, useState } from "react";
+import useLoginModal from "@/hooks/useLoginModal";
+import useRegisterModal from "@/hooks/useRegisterModal";
+import { signIn } from "next-auth/react";
 
 const LoginModal = () => {
   const loginModal = useLoginModal();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const onSubmit = useCallback(() => {
+  const registerModal = useRegisterModal();
+
+  const onToggle = useCallback(() => {
+    if (isLoading) {
+      return;
+    }
+
+    loginModal.onClose();
+    registerModal.onOpen();
+  }, [isLoading, registerModal, loginModal]);
+
+  const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      //   TODO APP LOG IN
+      await signIn("credentials", {
+        email,
+        password,
+      });
 
       loginModal.onClose();
     } catch (error) {
@@ -20,33 +36,50 @@ const LoginModal = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [loginModal]);
+  }, [loginModal, email, password]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Input
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
         value={email}
+        placeholder="Email"
         disabled={isLoading}
+        type="email"
+        onChange={(e) => setEmail(e.target.value)}
       />
       <Input
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
+        type="password"
         value={password}
         disabled={isLoading}
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
       />
+    </div>
+  );
+
+  const footerContent = (
+    <div className="text-neutral-400 text-center mt-4">
+      <p>
+        First time using Twitter?{" "}
+        <span
+          className="text-white cursor-pointer hover:underline"
+          onClick={onToggle}
+        >
+          Create an account?
+        </span>
+      </p>
     </div>
   );
 
   return (
     <Modal
-      body={bodyContent}
-      disabled={isLoading}
-      isOpen={loginModal.isOpen}
       title="Login"
-      actionLabel="Sign in"
+      body={bodyContent}
       onSubmit={onSubmit}
+      disabled={isLoading}
+      actionLabel="Sign in"
+      footer={footerContent}
+      isOpen={loginModal.isOpen}
       onClose={loginModal.onClose}
     />
   );

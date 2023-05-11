@@ -1,8 +1,11 @@
+import axios from "axios";
+import Modal from "../Modal";
+import Input from "../Input";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
+import { useCallback, useState } from "react";
 import useLoginModal from "@/hooks/useLoginModal";
 import useRegisterModal from "@/hooks/useRegisterModal";
-import { useCallback, useState } from "react";
-import Input from "../Input";
-import Modal from "../Modal";
 
 const RegisterModal = () => {
   const loginModal = useLoginModal();
@@ -12,59 +15,96 @@ const RegisterModal = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const onSubmit = useCallback(() => {
+
+  const onToggle = useCallback(() => {
+    if (isLoading) {
+      return;
+    }
+
+    registerModal.onClose();
+    loginModal.onOpen();
+  }, [isLoading, registerModal, loginModal]);
+
+  const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      //   TODO APP Register And Login
+      await axios.post("api/register", {
+        name,
+        email,
+        password,
+        username,
+      });
+
+      toast.success("Account created.");
+
+      signIn("credentials", {
+        email,
+        password,
+      });
 
       registerModal.onClose();
     } catch (error) {
       console.log(error);
+      toast.error("Something went wrong.");
     } finally {
       setIsLoading(false);
     }
-  }, [registerModal]);
+  }, [registerModal, email, name, password, username]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Input
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
         value={email}
+        placeholder="Email"
         disabled={isLoading}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <Input
-        placeholder="Name"
-        onChange={(e) => setName(e.target.value)}
         value={name}
+        placeholder="Name"
         disabled={isLoading}
+        onChange={(e) => setName(e.target.value)}
       />
       <Input
-        placeholder="Username"
-        onChange={(e) => setUsername(e.target.value)}
         value={username}
         disabled={isLoading}
+        placeholder="Username"
+        onChange={(e) => setUsername(e.target.value)}
       />
       <Input
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
+        type="password"
         value={password}
         disabled={isLoading}
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
       />
     </div>
   );
 
-  const footer = <div className="text-neutral-400 text-center mt-4"></div>;
+  const footerContent = (
+    <div className="text-neutral-400 text-center mt-4">
+      <p>
+        Already have an account?{" "}
+        <span
+          className="text-white cursor-pointer hover:underline"
+          onClick={onToggle}
+        >
+          Sign in
+        </span>
+      </p>
+    </div>
+  );
 
   return (
     <Modal
       body={bodyContent}
-      disabled={isLoading}
-      isOpen={registerModal.isOpen}
-      title="Create an account"
-      actionLabel="Register"
       onSubmit={onSubmit}
+      disabled={isLoading}
+      actionLabel="Register"
+      footer={footerContent}
+      title="Create an account"
+      isOpen={registerModal.isOpen}
       onClose={registerModal.onClose}
     />
   );
