@@ -1,6 +1,6 @@
-import useUsers from "@/hooks/useUsers";
 import { memo } from "react";
 import Avatar from "../Avatar";
+import useUsers from "@/hooks/useUsers";
 
 const FollowBar = () => {
   const { data: users = [] } = useUsers();
@@ -19,7 +19,7 @@ const FollowBar = () => {
                 <Avatar userId={id} />
                 <div className="flex flex-col">
                   <p className="text-white font-semibold text-sm">{name}</p>
-                  <p className="text-netural-400 text-sm">@{username}</p>
+                  <p className="text-neutral-400 text-sm">@{username}</p>
                 </div>
               </div>
             );
