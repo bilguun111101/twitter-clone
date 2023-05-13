@@ -1,3 +1,4 @@
+import Image from "next/image";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/router";
 import React, { FC, useCallback } from "react";
@@ -22,7 +23,20 @@ const Avatar: FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
     },
     [router, userId]
   );
-  return <div>Avatar</div>;
+  return (
+    <div
+      className={`${hasBorder ? "border-4 border-black" : ""} ${
+        isLarge ? "w-32 h-32" : "w-12 h-12"
+      } rounded-full hover:opacity-90 transition cursor-pointer relative`}
+    >
+      <Image
+        fill
+        style={{ objectFit: "cover", borderRadius: "100%" }}
+        onClick={onClick}
+        src={fetchedUser?.profileImage || "/images/placeholder.png"}
+      />
+    </div>
+  );
 };
 
 export default Avatar;
