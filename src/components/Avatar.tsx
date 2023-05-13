@@ -31,8 +31,9 @@ const Avatar: FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
     >
       <Image
         fill
-        style={{ objectFit: "cover", borderRadius: "100%" }}
+        alt=""
         onClick={onClick}
+        style={{ objectFit: "cover", borderRadius: "100%" }}
         src={fetchedUser?.profileImage || "/images/placeholder.png"}
       />
     </div>
