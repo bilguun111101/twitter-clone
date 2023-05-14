@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, memo, useMemo } from "react";
 import { format } from "date-fns";
 import useUser from "@/hooks/useUser";
 import useCurrentUser from "@/hooks/useCurrentUser";
@@ -61,4 +61,4 @@ const UserBio: FC<UserBioProps> = ({ userId }) => {
   );
 };
 
-export default UserBio;
+export default memo(UserBio);

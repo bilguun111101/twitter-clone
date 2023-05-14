@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { ClipLoader } from "react-spinners";
 import UserHero from "@/components/users/UserHero";
 import UserBio from "@/components/users/UserBio";
+import { memo } from "react";
 
 const UserView = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const UserView = () => {
   if (isLoading || !fetchedUser) {
     return (
       <div className="flex justify-center items-center h-full">
-        <ClipLoader />
+        <ClipLoader color="lightblue" size={80} />
       </div>
     );
   }
@@ -22,8 +23,9 @@ const UserView = () => {
       <Header showBackArrow label={`${fetchedUser?.name}`} />
       <UserHero userId={userId as string} />
       <UserBio userId={userId as string} />
+      {/* <PostFeed userId={userId as string} /> */}
     </>
   );
 };
 
-export default UserView;
+export default memo(UserView);

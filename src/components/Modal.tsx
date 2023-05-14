@@ -115,7 +115,7 @@ const Modal: FC<ModalProps> = ({
                 label={actionLabel}
                 secondary
                 fullWidth
-                outline
+                outline={false}
                 large
                 onClick={handleSubmit}
               />
